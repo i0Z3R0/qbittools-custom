@@ -24,14 +24,14 @@ def __init__(args, logger):
 
         pattern = ""
 
-        tracker_matches = list(filter(lambda x: len(tldextract.extract(x.url).registered_domain) > 0, trackers))
+        # tracker_matches = list(filter(lambda x: len(tldextract.extract(x.url).registered_domain) > 0, trackers))
 
-        if len(tracker_matches) > 0:
-            domain = tldextract.extract(tracker_matches[0].url).registered_domain
-            pattern += f"[{domain}]"
+        # if len(tracker_matches) > 0:
+        #     domain = tldextract.extract(tracker_matches[0].url).registered_domain
+        #     pattern += f"[{domain}]"
 
-        if args.category:
-            pattern += f" [{args.category}]"
+        # if args.category:
+        #     pattern += f" [{args.category}]"
 
         pattern += f" {os.fsencode(name).decode('utf8', 'replace')} [{h}].torrent"
         to_path = Path(args.output, pattern.strip()).expanduser()
