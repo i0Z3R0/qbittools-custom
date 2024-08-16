@@ -22,6 +22,7 @@ def __init__(args, logger):
 
     for h, name, trackers in torrents:
         from_path = Path(args.input, f"{h}.torrent").expanduser()
+        logger.info(from_path)
         if not from_path.exists():
             logger.error(f"{os.fsencode(from_path).decode('utf8', 'replace')} doesn't exist!")
             continue
