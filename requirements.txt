@@ -1,0 +1,8 @@
+qbittorrent-api
+tldextract
+tqdm
+requests
+packaging
+pathlib3x
+humanfriendly
+dulwich

@@ -1,0 +1,42 @@
+FROM python:3-bullseye as builder
+ARG VERSION
+ARG TARGET
+ARG SCCACHE_VERSION=0.5.3
+ARG RUSTC_WRAPPER=/sccache
+ARG CACHE_DIR
+
+ENV DEBIAN_FRONTEND noninteractive
+ENV CARGO_HOME=/app/cache/$CACHE_DIR/cargo
+ENV PIP_CACHE_DIR=/app/cache/$CACHE_DIR/pip
+ENV PYOXIDIZER_CACHE_DIR=/app/cache/$CACHE_DIR/pyoxidizer
+ENV SCCACHE_IDLE_TIMEOUT=0
+ENV SCCACHE_DIR=/app/cache/$CACHE_DIR/sccache
+
+RUN test -n "$TARGET" && \
+    test -n "$VERSION"
+
+RUN apt update && apt install -y upx binutils musl-tools --no-install-recommends && rm -rf /var/lib/apt/lists/*
+RUN python3 -m pip install pyoxidizer==0.23.0
+
+RUN wget -O sccache.tar.gz --progress dot:mega "https://github.com/mozilla/sccache/releases/download/v$SCCACHE_VERSION/sccache-v$SCCACHE_VERSION-x86_64-unknown-linux-musl.tar.gz" && \
+    tar -xvzf sccache.tar.gz && \
+    mv sccache-*/sccache /sccache && \
+    chmod +x /sccache
+
+WORKDIR /app
+COPY . .
+
+RUN echo __version__ = "\"$VERSION\"" | tee _version.py
+RUN /sccache --start-server && \
+    /sccache --show-stats && \
+    pyoxidizer build --release --verbose --target-triple $TARGET && \
+    /sccache --show-stats && \
+    /sccache --stop-server
+RUN mv build/$TARGET/release/install/qbittools .
+RUN strip qbittools
+RUN upx --best --lzma qbittools
+
+
+FROM scratch
+COPY --from=builder /app/qbittools /
+#COPY --from=builder /app/cache /cache
