@@ -3,6 +3,7 @@
 import os, shutil, tldextract
 from pathlib import Path
 import qbittools
+import time
 
 def __init__(args, logger):
     client = qbittools.qbit_client(args)
@@ -13,8 +14,11 @@ def __init__(args, logger):
     else:
         torrents = list(map(lambda x: (x.hash, x.name, x.trackers), client.torrents.info(category=args.category)))
         
-    logger.info(f"Matched {len(torrents)} torrents")
+    print(f"Matched {len(torrents)} torrents")
+    print(torrents)
     Path(args.output).expanduser().mkdir(parents=True, exist_ok=True)
+
+    time.sleep(2)
 
     for h, name, trackers in torrents:
         from_path = Path(args.input, f"{h}.torrent").expanduser()
