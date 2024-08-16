@@ -14,8 +14,8 @@ def __init__(args, logger):
     else:
         torrents = list(map(lambda x: (x.hash, x.name, x.trackers), client.torrents.info(category=args.category)))
         
-    print(f"Matched {len(torrents)} torrents")
-    print(torrents)
+    logger.info(f"Matched {len(torrents)} torrents")
+    logger.info(torrents)
     Path(args.output).expanduser().mkdir(parents=True, exist_ok=True)
 
     time.sleep(2)
