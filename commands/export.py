@@ -22,7 +22,7 @@ def __init__(args, logger):
             logger.error(f"{os.fsencode(from_path).decode('utf8', 'replace')} doesn't exist!")
             continue
 
-        pattern = ""
+        # pattern = ""
 
         # tracker_matches = list(filter(lambda x: len(tldextract.extract(x.url).registered_domain) > 0, trackers))
 
@@ -33,7 +33,8 @@ def __init__(args, logger):
         # if args.category:
         #     pattern += f" [{args.category}]"
 
-        pattern += f" {os.fsencode(name).decode('utf8', 'replace')} [{h}].torrent"
+        # pattern = f" {os.fsencode(name).decode('utf8', 'replace')} [{h}].torrent"
+        pattern = f"{name}.torrent"
         to_path = Path(args.output, pattern.strip()).expanduser()
 
         shutil.copy2(from_path, to_path)
